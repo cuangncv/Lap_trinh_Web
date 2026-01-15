@@ -1,0 +1,28 @@
+.UserDetail {
+  width: 100%;
+  margin: 20px;
+}
+
+.profile-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.profile-action-btn {
+  padding: 6px 14px;
+  border: 1px solid #1976d2;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #1976d2;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-action-btn:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+}

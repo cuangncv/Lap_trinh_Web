@@ -1,0 +1,60 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.app-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 1000;
+}
+
+.topbar-appBar {
+  height: 60px !important;
+}
+
+.main-container {
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar-fixed {
+  width: 280px;
+  height: 100%;
+  background: white;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.content-fixed {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sidebar-paper {
+  height: auto;
+  border-radius: 0;
+}
+
+.content-paper {
+  height: auto;
+  border-radius: 0;
+  padding: 20px;
+}
