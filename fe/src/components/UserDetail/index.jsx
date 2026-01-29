@@ -9,6 +9,8 @@ function UserDetail({ user }) {
   const [userInfo, setUserInfo] = useState(null);
   const [formData, setFormData] = useState({});
   const [editMode, setEditMode] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loadingFollow, setLoadingFollow] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,6 +20,12 @@ function UserDetail({ user }) {
       setUserInfo(userData);
       setFormData(userData);
       setEditMode(false);
+          if (user && user._id !== userData._id) {
+            const res = await fetchModel(
+              `http://localhost:8080/api/user/${userData._id}/is-following`
+      );
+      setIsFollowing(res.isFollowing);
+    }
     };
 
     fetchData();
@@ -68,6 +76,36 @@ const handleSave = async () => {
   }
 };
 
+const handleFollow = async () => {
+  try {
+    setLoadingFollow(true);
+    await fetch(`http://localhost:8080/api/user/${userInfo._id}/follow`, {
+      method: "POST",
+      credentials: "include",
+    });
+    setIsFollowing(true);
+  } catch (err) {
+    alert("Follow failed");
+  } finally {
+    setLoadingFollow(false);
+  }
+};
+
+const handleUnfollow = async () => {
+  try {
+    setLoadingFollow(true);
+    await fetch(`http://localhost:8080/api/user/${userInfo._id}/unfollow`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    setIsFollowing(false);
+  } catch (err) {
+    alert("Unfollow failed");
+  } finally {
+    setLoadingFollow(false);
+  }
+};
+
   return (
     <div className="UserDetail">
       <Typography variant="h4">
@@ -94,6 +132,15 @@ const handleSave = async () => {
             onClick={() => setEditMode(true)}
           >
             Edit Profile
+          </button>
+        )}
+        {!isOwner && (
+          <button
+              className="profile-action-btn"
+              disabled={loadingFollow}
+              onClick={isFollowing ? handleUnfollow : handleFollow}
+          >
+          {isFollowing ? "Unfollow" : "Follow"}
           </button>
         )}
         {editMode && (

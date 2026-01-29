@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema({
   occupation: { type: String },
   login_name: { type: String, required: true },
   password: { type: String, required: true },
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 module.exports = mongoose.model.User || mongoose.model("User", userSchema);

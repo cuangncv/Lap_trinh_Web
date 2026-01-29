@@ -8,6 +8,8 @@ function UserList() {
   const [photoCounts, setPhotoCounts] = useState({});
   const [commentCounts, setCommentCounts] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [followCounts, setFollowCounts] = useState({});
+  const [followingCounts, setFollowingCounts] = useState({});
   useEffect(() => {
     const fetchUsers = async () => {
       const data = await fetchModel(
@@ -32,7 +34,11 @@ function UserList() {
         { credentials: "include" }
       );
       const cmtData = await resCmt.json();
-
+      const resFollow = await fetch(
+        `http://localhost:8080/api/user/${user._id}/follow-stats`,
+        { credentials: "include" }
+      );
+      const followData = await resFollow.json();
       setPhotoCounts((prev) => ({
         ...prev,
         [user._id]: photoData.count,
@@ -42,6 +48,17 @@ function UserList() {
         ...prev,
         [user._id]: cmtData.count,
       }));
+
+      setFollowCounts((prev) => ({
+        ...prev,
+        [user._id]: followData.followers,
+      }));
+
+      setFollowingCounts((prev) => ({
+        ...prev,
+        [user._id]: followData.following,
+      }));
+
     });
   }, [users]);
 
@@ -69,7 +86,9 @@ function UserList() {
             </Link>
             <span className="photo-count">
               {photoCounts[user._id] ?? 0} photos,{" "}
-              {commentCounts[user._id] ?? 0} comments
+              {commentCounts[user._id] ?? 0} comments, {" "}
+              {followCounts[user._id] ?? 0} followers, {" "}
+              {followingCounts[user._id] ?? 0} following
             </span>
           </li>
         ))}

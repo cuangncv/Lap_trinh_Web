@@ -192,6 +192,76 @@ router.get("/:id", async (request, response) => {
   }
 });
 
+router.get("/:id/is-following", requireAuth, async (req, res) => {
+  try {
+    const targetUserId = req.params.id;
+    const currentUserId = req.session.userId;
 
+    const currentUser = await User.findById(currentUserId);
+
+    const isFollowing = currentUser.following?.includes(targetUserId);
+
+    res.json({ isFollowing });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/:id/follow", requireAuth, async (req, res) => {
+  try {
+    const targetUserId = req.params.id;
+    const currentUserId = req.session.userId;
+
+    if (targetUserId === currentUserId.toString()) {
+      return res.status(400).json({ message: "Cannot follow yourself" });
+    }
+
+    await User.findByIdAndUpdate(currentUserId, {
+      $addToSet: { following: targetUserId },
+    });
+
+    await User.findByIdAndUpdate(targetUserId, {
+      $addToSet: { followers: currentUserId },
+    });
+
+    res.json({ message: "Followed successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.delete("/:id/unfollow", requireAuth, async (req, res) => {
+  try {
+    const targetUserId = req.params.id;
+    const currentUserId = req.session.userId;
+
+    await User.findByIdAndUpdate(currentUserId, {
+      $pull: { following: targetUserId },
+    });
+
+    await User.findByIdAndUpdate(targetUserId, {
+      $pull: { followers: currentUserId },
+    });
+
+    res.json({ message: "Unfollowed successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/:id/follow-stats", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json({
+      followers: user.followers?.length || 0,
+      following: user.following?.length || 0,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
